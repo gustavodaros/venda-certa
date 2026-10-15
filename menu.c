@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include "structs.h"
 
+// Anotações:
+// Separar as funções do menu.c de modo que a fila de pedidos seja utilizada
+// Dá pra manter a pilha funcionando sem desempilhar
+// Criar um arquivo .h para todos os arquivos .c auxiliares
+
 void limpar_buffer() 
 {
     int c;
