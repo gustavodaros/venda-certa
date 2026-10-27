@@ -67,8 +67,19 @@ Pedido *desenfileirar_pedido(FilaPedidos *fila)
     Pedido *removido = fila->frente;
     fila->frente = removido->proximo;
     if(fila->frente == NULL) fila->tras = NULL;
-
     removido->proximo = NULL;
 
     return removido;
+}
+
+void liberar_pedido(Pedido *pedido)
+{
+    ItemPedido *item_removido = pedido->itens;
+    while(item_removido != NULL)
+    {
+        ItemPedido *proximo = item_removido->proximo;
+        free(item_removido);
+        item_removido = proximo;
+    }
+    free(pedido);
 }

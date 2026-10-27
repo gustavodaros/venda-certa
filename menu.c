@@ -57,9 +57,16 @@ void cadastrar_pedido(ListaProdutos *lista_produtos, FilaPedidos *fila_pedidos, 
         adicionar_item_pedido(pedido, item_pedido);
     }
     enfileirar_pedido(fila_pedidos, pedido);
+}
 
+void empilhar_empacotar(FilaPedidos *fila_pedidos, FilaPacotes *fila_pacotes)
+{
+    if(fila_pedidos == NULL) return;
+
+    Pedido *pedido = desenfileirar_pedido(fila_pedidos);
     PilhaPacote *pilha = criar_pilha_pacote();
     ItemPedido *item = pedido->itens;
+
     while(item != NULL)
     {
         if(!empilhar(pilha, item->produto->volume, item->produto->codigo)) 
@@ -77,6 +84,8 @@ void cadastrar_pedido(ListaProdutos *lista_produtos, FilaPedidos *fila_pedidos, 
         Pacote *pacote = empacotar(pedido, pilha);
         enfileirar_pacotes(fila_pacotes, pacote);
     }
+    
+    liberar_pedido(pedido);
 }
 
 int main() 

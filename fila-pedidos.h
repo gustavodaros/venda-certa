@@ -37,5 +37,6 @@ Pedido *criar_pedido(int codigo, char *endereco, int status);
 void adicionar_item_pedido(Pedido *pedido, ItemPedido *item);
 void enfileirar_pedido(FilaPedidos *fila, Pedido *pedido);
 Pedido *desenfileirar_pedido(FilaPedidos *fila);
+void liberar_pedido(FilaPedidos *fila, Pedido *pedido);
 
 #endif
