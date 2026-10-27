@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "structs.h"
+#include "produto.h"
 
 ListaProdutos *criar_lista_produtos()
 {

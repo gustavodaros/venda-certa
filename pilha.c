@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "structs.h"
+#include "pilha.h"
 
 PilhaPacote *criar_pilha_pacote()
 {
