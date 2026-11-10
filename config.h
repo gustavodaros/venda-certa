@@ -1,0 +1,9 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define CAPACIDADE_CAIXA 10 
+#define VOLUME_MIN_PRODUTO 1
+#define TAM_ENDERECO 100
+#define TAM_CODIGO_PACOTE 32
+
+#endif

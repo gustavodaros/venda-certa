@@ -1,35 +1,24 @@
-#include "structs.h"
-#ifndef FilaPacotes_H
-#define FilaPacotes_H
+#ifndef FILA_PACOTES_H
+#define FILA_PACOTES_H
 
-typedef struct Pedido {
-    int codigo;
-    char endereco[100];
-    int status;
-    ItemPedido *itens;
-    struct Pedido *proximo;
-} Pedido;
+#include "fila-pedidos.h"
+#include "pilha.h"
 
-typedef struct PilhaPacote {
-    NoPilha *topo;
-    int volume_total;
-} PilhaPacote;
+typedef struct Pacote Pacote;
+typedef struct FilaPacotes FilaPacotes;
 
-typedef struct Pacote {
-    int codigo;
-    char endereco[100];
-    int volume_total;
-    struct Pacote *proximo;
-} Pacote;
-
-typedef struct FilaPacotes {
-    Pacote *frente;
-    Pacote *tras;
-} FilaPacotes;
-
-Pacote *desenfileirar_pacotes(FilaPacotes *fila);
-void enfileirar_pacotes(FilaPacotes *fila, Pacote *pacote);
-Pacote *empacotar(Pedido *pedido, PilhaPacote *pilha);
 FilaPacotes *criar_fila_pacotes();
+Pacote *empacotar(Pedido *pedido, PilhaPacote *pilha, int sequencia);
+void enfileirar_pacotes(FilaPacotes *fila, Pacote *pacote);
+Pacote *desenfileirar_pacotes(FilaPacotes *fila);        
+int fila_pacotes_vazia(FilaPacotes *fila);
+void imprimir_fila_pacotes(FilaPacotes *fila);
+void liberar_pacote(Pacote *pacote);
+void liberar_fila_pacotes(FilaPacotes *fila);
+
+char *pacote_codigo(Pacote *pacote);
+char *pacote_endereco(Pacote *pacote);
+int pacote_quantidade_itens(Pacote *pacote);
+int pacote_volume_total(Pacote *pacote);
 
 #endif

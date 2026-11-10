@@ -1,20 +1,14 @@
-#include "structs.h"
-#ifndef Pilha_H
-#define Pilha_H
+#ifndef PILHA_H
+#define PILHA_H
 
-typedef struct NoPilha {
-    int codigo;
-    int volume;
-    struct NoPilha *proximo;
-} NoPilha;
+typedef struct PilhaPacote PilhaPacote;
 
-typedef struct PilhaPacote {
-    NoPilha *topo;
-    int volume_total;
-} PilhaPacote;
-
-PilhaPacote *criar_pilha_pacote();
-void desempilhar(PilhaPacote *pilha);
-int empilhar(PilhaPacote *pilha, int volume, int codigo);
+PilhaPacote *criar_pilha_pacote(void);
+int empilhar(PilhaPacote *pilha, int volume, int codigo); 
+void desempilhar(PilhaPacote *pilha);                      
+int pilha_vazia(PilhaPacote *pilha);
+int pilha_volume_total(PilhaPacote *pilha);
+int pilha_quantidade(PilhaPacote *pilha);
+void liberar_pilha(PilhaPacote *pilha);
 
 #endif
