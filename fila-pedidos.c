@@ -23,7 +23,7 @@ struct FilaPedidos{
     Pedido *tras;
 };
 
-FilaPedidos *criar_fila_pedidos(void)
+FilaPedidos *criar_fila_pedidos()
 {
     FilaPedidos *fila = (FilaPedidos*)malloc(sizeof(FilaPedidos));
     if (fila == NULL) return NULL;
@@ -46,7 +46,7 @@ ItemPedido *criar_item_pedido(Produto *produto, int quantidade)
     return novo;
 }
 
-Pedido *criar_pedido(int codigo, const char *endereco, int status)
+Pedido *criar_pedido(int codigo, char *endereco, int status)
 {
     if (endereco == NULL) return NULL;
 
@@ -95,12 +95,12 @@ Pedido *desenfileirar_pedido(FilaPedidos *fila)
     return removido;
 }
 
-int fila_pedidos_vazia(const FilaPedidos *fila)
+int fila_pedidos_vazia(FilaPedidos *fila)
 {
     return fila == NULL || fila->frente == NULL;
 }
 
-static const char *texto_status(int status)
+char *texto_status(int status)
 {
     switch (status){
         case PEDIDO_AGUARDANDO_SEPARACAO: return "Aguardando separação";
@@ -109,7 +109,7 @@ static const char *texto_status(int status)
     }
 }
 
-void imprimir_fila_pedidos(const FilaPedidos *fila)
+void imprimir_fila_pedidos(FilaPedidos *fila)
 {
     if (fila_pedidos_vazia(fila)){
         printf("Nenhum pedido na fila.\n");
@@ -120,8 +120,10 @@ void imprimir_fila_pedidos(const FilaPedidos *fila)
     {
         printf("Pedido %d | Endereço: %s | Status: %s\n", p->codigo, p->endereco, texto_status(p->status));
 
-        for (ItemPedido *i = p->itens; i != NULL; i = i->proximo)
+        for (ItemPedido *i = p->itens; i != NULL; i = i->proximo) 
+        {
             printf("Produto %d (volume %d) x %d\n", produto_codigo(i->produto), produto_volume(i->produto), i->quantidade);
+        }
     }
 }
 
@@ -149,32 +151,26 @@ void liberar_fila_pedidos(FilaPedidos *fila)
     free(fila);
 }
 
-int pedido_codigo(const Pedido *pedido)
-{
+int pedido_codigo(Pedido *pedido){
     return pedido == NULL ? 0 : pedido->codigo;
 }
 
-char *pedido_endereco(const Pedido *pedido)
-{
+char *pedido_endereco(Pedido *pedido){
     return pedido == NULL ? "" : pedido->endereco;
 }
 
-ItemPedido *pedido_primeiro_item(const Pedido *pedido)
-{
+ItemPedido *pedido_primeiro_item(Pedido *pedido){
     return pedido == NULL ? NULL : pedido->itens;
 }
 
-ItemPedido *item_proximo(const ItemPedido *item)
-{
+ItemPedido *item_proximo(ItemPedido *item){
     return item == NULL ? NULL : item->proximo;
 }
 
-Produto *item_produto(const ItemPedido *item)
-{
+Produto *item_produto(ItemPedido *item){
     return item == NULL ? NULL : item->produto;
 }
 
-int item_quantidade(const ItemPedido *item)
-{
+int item_quantidade(ItemPedido *item){
     return item == NULL ? 0 : item->quantidade;
 }
