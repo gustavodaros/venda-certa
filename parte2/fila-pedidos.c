@@ -16,6 +16,7 @@ struct Pedido{
     ItemPedido *itens;
     ItemPedido *ultimo_item;
     Pedido *proximo;
+    int prioridade;
 };
 
 struct FilaPedidos{
@@ -46,7 +47,7 @@ ItemPedido *criar_item_pedido(Produto *produto, int quantidade)
     return novo;
 }
 
-Pedido *criar_pedido(int codigo, char *endereco, int status)
+Pedido *criar_pedido(int codigo, char *endereco, int status, int prioridade)
 {
     if (endereco == NULL) return NULL;
 
@@ -59,6 +60,7 @@ Pedido *criar_pedido(int codigo, char *endereco, int status)
     novo->itens = NULL;
     novo->ultimo_item = NULL;
     novo->proximo = NULL;
+    novo->prioridade = prioridade;
     return novo;
 }
 
@@ -75,7 +77,7 @@ int adicionar_item_pedido(Pedido *pedido, ItemPedido *item)
 
 void enfileirar_pedido(FilaPedidos *fila, Pedido *pedido)
 {
-    if (fila == NULL || pedido == NULL) return;
+     if (fila == NULL || pedido == NULL) return;
 
     pedido->proximo = NULL;
     if (fila->tras == NULL) fila->frente = pedido;
@@ -173,4 +175,8 @@ Produto *item_produto(ItemPedido *item){
 
 int item_quantidade(ItemPedido *item){
     return item == NULL ? 0 : item->quantidade;
+}
+
+int pedido_prioridade(Pedido *pedido){
+    return pedido == NULL ? 0: pedido->prioridade;
 }

@@ -128,6 +128,7 @@ void cadastrar_pedido(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
     char endereco[TAM_ENDERECO];
     int itens_adicionados = 0;
     int adicionar_mais = 0;
+    int prioridade = 0;
 
     printf("Cadastre seu pedido\n");
     if(arvore_produtos_vazia(arvore_produtos)){
@@ -142,21 +143,30 @@ void cadastrar_pedido(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
         return;
     }
 
-    Pedido *pedido = criar_pedido(proximo_codigo_pedido, endereco, PEDIDO_AGUARDANDO_SEPARACAO);
-    if(pedido == NULL){
+    if(!ler_inteiro("Digite a prioridade do seu pedido:\n1 = Expressa\n2 = Rápida\n3 = Normal\n", 
+    &prioridade) || prioridade < PRIORIDADE_EXPRESSA || prioridade > PRIORIDADE_NORMAL)
+    {
+        printf("Prioridade inválida\n");
+        return;
+    }
+
+    Pedido *pedido = criar_pedido(proximo_codigo_pedido, endereco, PEDIDO_AGUARDANDO_SEPARACAO, prioridade);
+    if(pedido == NULL)
+    {
         printf("Erro ao criar o pedido\n");
         return;
     }
 
     do {
-        if (ler_item_pedido(arvore_produtos, pedido)) itens_adicionados++;
+        if(ler_item_pedido(arvore_produtos, pedido)) itens_adicionados++;
 
         adicionar_mais = 0;
         ler_inteiro("Adicionar outro item?\n1 = sim\n0 = não\n", &adicionar_mais);
 
     } while(adicionar_mais == 1);
 
-    if(itens_adicionados == 0){
+    if(itens_adicionados == 0)
+    {
         printf("Pedido sem itens, cadastro cancelado\n");
         liberar_pedido(pedido);
         return;

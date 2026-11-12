@@ -9,6 +9,7 @@ struct Pacote{
     int quantidade_itens;
     int volume_total;
     Pacote *proximo;
+    int prioridade;
 };
 
 struct FilaPacotes{
@@ -38,6 +39,7 @@ Pacote *empacotar(Pedido *pedido, PilhaPacote *pilha, int sequencia)
     novo->quantidade_itens = pilha_quantidade(pilha);
     novo->volume_total = pilha_volume_total(pilha);
     novo->proximo = NULL;
+    novo->prioridade = pedido_prioridade(pedido);
     return novo;
 }
 
@@ -45,10 +47,19 @@ void enfileirar_pacotes(FilaPacotes *fila, Pacote *pacote)
 {
     if (fila == NULL || pacote == NULL) return;
 
-    pacote->proximo = NULL;
-    if (fila->tras == NULL) fila->frente = pacote;
-    else fila->tras->proximo = pacote;
-    fila->tras = pacote;
+    Pacote *anterior = NULL;
+    Pacote *atual = fila->frente;
+    while(atual != NULL && atual->prioridade <= pacote->prioridade)
+    {
+        anterior = atual;
+        atual = atual->proximo;
+    }
+    pacote->proximo = atual;
+
+    if(anterior == NULL) fila->frente = pacote;
+    else anterior->proximo = pacote;
+
+    if(atual == NULL) fila->tras = pacote;
 }
 
 Pacote *desenfileirar_pacotes(FilaPacotes *fila)
@@ -76,7 +87,8 @@ void imprimir_fila_pacotes(FilaPacotes *fila)
     }
 
     for (Pacote *p = fila->frente; p != NULL; p = p->proximo){
-        printf("%s | Endereço: %s | Itens: %d | Volume total: %d\n", p->codigo, p->endereco, p->quantidade_itens, p->volume_total);
+        printf("%s | Endereço: %s | Itens: %d | Volume total: %d | Prioridade: %d\n",
+        p->codigo, p->endereco, p->quantidade_itens, p->volume_total, p->prioridade);
     }
 }
 

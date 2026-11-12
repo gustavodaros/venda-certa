@@ -14,7 +14,7 @@ typedef enum{
 
 FilaPedidos *criar_fila_pedidos(void);
 ItemPedido *criar_item_pedido(Produto *produto, int quantidade);
-Pedido *criar_pedido(int codigo, char *endereco, int status);
+Pedido *criar_pedido(int codigo, char *endereco, int status, int prioridade);
 int adicionar_item_pedido(Pedido *pedido, ItemPedido *item);  
 void enfileirar_pedido(FilaPedidos *fila, Pedido *pedido);
 Pedido *desenfileirar_pedido(FilaPedidos *fila);             
@@ -29,5 +29,6 @@ ItemPedido *pedido_primeiro_item(Pedido *pedido);
 ItemPedido *item_proximo(ItemPedido *item);
 Produto *item_produto(ItemPedido *item);
 int item_quantidade(ItemPedido *item);
+int pedido_prioridade(Pedido *pedido);
 
 #endif
