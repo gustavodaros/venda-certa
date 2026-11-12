@@ -2,7 +2,7 @@
 #define PRODUTO_H
 
 typedef struct Produto Produto;
-typedef struct ListaProdutos ListaProdutos;
+typedef struct AbbProdutos AbbProdutos;
 
 typedef enum{
     PRODUTO_OK = 0,
@@ -11,12 +11,15 @@ typedef enum{
     PRODUTO_CODIGO_DUPLICADO
 } ResultadoProduto;
 
-ListaProdutos *criar_lista_produtos();
-ResultadoProduto inserir_lista_produtos(ListaProdutos *lista, int volume, int codigo);
-Produto *buscar_produto(ListaProdutos *lista, int codigo);
-int lista_produtos_vazia(ListaProdutos *lista);
-void imprimir_lista_produtos(ListaProdutos *lista);
-void liberar_lista_produtos(ListaProdutos *lista);
+AbbProdutos *criar_arvore_produtos();
+ResultadoProduto inserir_arvore_produtos(AbbProdutos *lista, int volume, int codigo);
+Produto *criar_produto(int codigo, int volume);
+Produto *buscar_produto(AbbProdutos *lista, int codigo);
+int arvore_produtos_vazia(AbbProdutos *lista);
+void imprimir_em_ordem(Produto *raiz);
+void imprimir_arvore_produtos(AbbProdutos *abb);
+void liberar_pos_ordem(Produto* raiz);
+void liberar_arvore_produtos(AbbProdutos *abb);
 
 int produto_codigo(Produto *produto);
 int produto_volume(Produto *produto);

@@ -6,86 +6,119 @@
 struct Produto{
     int volume;
     int codigo;
-    Produto *proximo;
+    Produto *esquerdo;
+    Produto *direito;
+    Produto *pai;
 };
 
-struct ListaProdutos{
-    Produto *primeiro;
+struct AbbProdutos{
+    Produto *raiz;
 };
 
-ListaProdutos *criar_lista_produtos()
+AbbProdutos *criar_arvore_produtos()
 {
-    ListaProdutos *lista = (ListaProdutos*)malloc(sizeof(ListaProdutos));
-
-    if (lista == NULL) return NULL;
-    lista->primeiro = NULL;
-    return lista;
+    AbbProdutos *abb = (AbbProdutos*)malloc(sizeof(AbbProdutos));
+    if (abb == NULL) return NULL;
+    abb->raiz = NULL;
+    return abb;
 }
 
-Produto *buscar_produto(ListaProdutos *lista, int codigo)
+Produto *buscar_produto(AbbProdutos *abb, int codigo)
 {
-    if (lista == NULL) return NULL;
+    if (abb == NULL) return NULL;
 
-    Produto *atual = lista->primeiro;
-    while (atual != NULL)
+    Produto *atual = abb->raiz;
+    while (atual != NULL && atual->codigo != codigo)
     {
-        if (atual->codigo == codigo) return atual;
-        atual = atual->proximo;
+        if (codigo < atual->codigo) atual = atual->esquerdo;
+        else atual = atual->direito;
     }
-    return NULL;
+    return atual;
 }
 
-ResultadoProduto inserir_lista_produtos(ListaProdutos *lista, int volume, int codigo)
+Produto* criar_produto(int codigo, int volume)
 {
-    if (lista == NULL) return PRODUTO_ERRO;
+    Produto* novo = (Produto*)malloc(sizeof(Produto));
+    if(novo == NULL) return NULL;
 
-    if (volume < VOLUME_MIN_PRODUTO || volume > CAPACIDADE_CAIXA)
-        return PRODUTO_VOLUME_INVALIDO;
+    novo->codigo = codigo;
+    novo->volume = volume;
+    novo->esquerdo = novo->direito = novo->pai = NULL;
 
-    if (buscar_produto(lista, codigo) != NULL)
+    return novo;
+}
+
+ResultadoProduto inserir_arvore_produtos(AbbProdutos *abb, int volume, int codigo)
+{
+    if(abb == NULL) return PRODUTO_ERRO;
+
+    if(volume < VOLUME_MIN_PRODUTO || volume > CAPACIDADE_CAIXA) 
+    return PRODUTO_VOLUME_INVALIDO;
+
+    if(buscar_produto(abb, codigo) != NULL)
         return PRODUTO_CODIGO_DUPLICADO;
 
-    Produto *novo = (Produto*)malloc(sizeof(Produto));
-    if (novo == NULL) return PRODUTO_ERRO;
+    Produto *novo = criar_produto(codigo, volume);
+    if(novo == NULL) return PRODUTO_ERRO;
 
-    novo->volume = volume;
-    novo->codigo = codigo;
-    novo->proximo = lista->primeiro;
-    lista->primeiro = novo;
+    Produto* pai = NULL;
+    Produto* atual = abb->raiz;
+
+    while(atual != NULL)
+    {
+        pai = atual;
+        if (novo->codigo < atual->codigo) atual = atual->esquerdo;
+        else atual = atual->direito;
+    }
+
+    novo->pai = pai;
+
+    if(abb->raiz == NULL) abb->raiz = novo;
+    else if(novo->codigo < pai->codigo) pai->esquerdo = novo;
+    else pai->direito = novo;
 
     return PRODUTO_OK;
 }
 
-int lista_produtos_vazia(ListaProdutos *lista)
+int arvore_produtos_vazia(AbbProdutos *abb)
 {
-    return lista == NULL || lista->primeiro == NULL;
+    return abb == NULL || abb->raiz == NULL;
 }
 
-void imprimir_lista_produtos(ListaProdutos *lista)
+void imprimir_em_ordem(Produto *raiz)
 {
-    if (lista_produtos_vazia(lista)){
-        printf("Nenhum produto cadastrado\n");
+    if (raiz == NULL) return;          
+
+    imprimir_em_ordem(raiz->esquerdo);
+    printf("Produto %d | volume %d\n", raiz->codigo, raiz->volume);
+    imprimir_em_ordem(raiz->direito);
+}
+
+void imprimir_arvore_produtos(AbbProdutos *abb)
+{
+    if (abb == NULL || abb->raiz == NULL){
+        printf("Nenhum produto cadastrado.\n");
         return;
     }
+    imprimir_em_ordem(abb->raiz);
+}
 
-    for (Produto *atual = lista->primeiro; atual != NULL; atual = atual->proximo)
+void liberar_pos_ordem(Produto* raiz)
+{
+    if(raiz != NULL) 
     {
-        printf("Produto %d | volume %d\n", atual->codigo, atual->volume);
+        liberar_pos_ordem(raiz->esquerdo);
+        liberar_pos_ordem(raiz->direito);
+        free(raiz);
     }
 }
 
-void liberar_lista_produtos(ListaProdutos *lista)
+void liberar_arvore_produtos(AbbProdutos *abb)
 {
-    if (lista == NULL) return;
+    if(abb == NULL) return;
 
-    Produto *atual = lista->primeiro;
-    while (atual != NULL)
-    {
-        Produto *proximo = atual->proximo;
-        free(atual);
-        atual = proximo;
-    }
-    free(lista);
+    liberar_pos_ordem(abb->raiz);
+    free(abb);
 }
 
 int produto_codigo(Produto *produto){

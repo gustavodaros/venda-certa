@@ -59,7 +59,7 @@ void pausar()
     limpar_tela();
 }
 
-void cadastrar_produto(ListaProdutos *lista_produtos)
+void cadastrar_produto(AbbProdutos *arvore_produtos)
 {
     int codigo, volume;
 
@@ -76,7 +76,7 @@ void cadastrar_produto(ListaProdutos *lista_produtos)
         return;
     }
 
-    switch(inserir_lista_produtos(lista_produtos, volume, codigo))
+    switch(inserir_arvore_produtos(arvore_produtos, volume, codigo))
     {
         case PRODUTO_OK:
             printf("Produto %d cadastrado com sucesso!\n", codigo);
@@ -93,7 +93,7 @@ void cadastrar_produto(ListaProdutos *lista_produtos)
     }
 }
 
-int ler_item_pedido(ListaProdutos *lista_produtos, Pedido *pedido)
+int ler_item_pedido(AbbProdutos *arvore_produtos, Pedido *pedido)
 {
     int codigo, quantidade;
 
@@ -102,7 +102,7 @@ int ler_item_pedido(ListaProdutos *lista_produtos, Pedido *pedido)
         return 0;
     }
 
-    Produto *produto = buscar_produto(lista_produtos, codigo);
+    Produto *produto = buscar_produto(arvore_produtos, codigo);
     if(produto == NULL){
         printf("Produto %d não encontrado no catálogo\n", codigo);
         return 0;
@@ -123,14 +123,14 @@ int ler_item_pedido(ListaProdutos *lista_produtos, Pedido *pedido)
     return 1;
 }
 
-void cadastrar_pedido(ListaProdutos *lista_produtos, FilaPedidos *fila_pedidos)
+void cadastrar_pedido(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
 {
     char endereco[TAM_ENDERECO];
     int itens_adicionados = 0;
     int adicionar_mais = 0;
 
     printf("Cadastre seu pedido\n");
-    if(lista_produtos_vazia(lista_produtos)){
+    if(arvore_produtos_vazia(arvore_produtos)){
         printf("Nenhum produto cadastrado. Cadastre um produto antes de criar pedidos.\n");
         return;
     }
@@ -148,13 +148,13 @@ void cadastrar_pedido(ListaProdutos *lista_produtos, FilaPedidos *fila_pedidos)
         return;
     }
 
-    do{
-        if (ler_item_pedido(lista_produtos, pedido)) itens_adicionados++;
+    do {
+        if (ler_item_pedido(arvore_produtos, pedido)) itens_adicionados++;
 
         adicionar_mais = 0;
-        ler_inteiro("Adicionar outro item? (1 = sim, 0 = nao)", &adicionar_mais);
+        ler_inteiro("Adicionar outro item?\n1 = sim\n0 = não\n", &adicionar_mais);
 
-    }while(adicionar_mais == 1);
+    } while(adicionar_mais == 1);
 
     if(itens_adicionados == 0){
         printf("Pedido sem itens, cadastro cancelado\n");
@@ -242,16 +242,16 @@ void empilhar_empacotar(FilaPedidos *fila_pedidos, FilaPacotes *fila_pacotes)
 int main()
 {
     int op = -1;
-    ListaProdutos *lista_produtos = criar_lista_produtos();
+    AbbProdutos *arvore_produtos = criar_arvore_produtos();
     FilaPedidos *fila_pedidos = criar_fila_pedidos();
     FilaPacotes *fila_pacotes = criar_fila_pacotes();
 
-    if (lista_produtos == NULL || fila_pedidos == NULL || fila_pacotes == NULL)
+    if (arvore_produtos == NULL || fila_pedidos == NULL || fila_pacotes == NULL)
     {
         printf("Erro ao inicializar o sistema\n");
         liberar_fila_pacotes(fila_pacotes);
         liberar_fila_pedidos(fila_pedidos);
-        liberar_lista_produtos(lista_produtos);
+        liberar_arvore_produtos(arvore_produtos);
         return 1;
     }
 
@@ -269,12 +269,12 @@ int main()
 
         switch (op) {
             case 1:
-                cadastrar_produto(lista_produtos);
+                cadastrar_produto(arvore_produtos);
                 pausar();
                 break;
 
             case 2:
-                cadastrar_pedido(lista_produtos, fila_pedidos);
+                cadastrar_pedido(arvore_produtos, fila_pedidos);
                 pausar();
                 break;
 
@@ -284,7 +284,7 @@ int main()
                 break;
 
             case 4:
-                imprimir_lista_produtos(lista_produtos);
+                imprimir_arvore_produtos(arvore_produtos);
                 pausar();
                 break;
 
@@ -312,7 +312,7 @@ int main()
 
     liberar_fila_pedidos(fila_pedidos);
     liberar_fila_pacotes(fila_pacotes);
-    liberar_lista_produtos(lista_produtos);
+    liberar_arvore_produtos(arvore_produtos);
 
     return 0;
 }
