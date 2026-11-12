@@ -120,11 +120,13 @@ void imprimir_fila_pedidos(FilaPedidos *fila)
 
     for (Pedido *p = fila->frente; p != NULL; p = p->proximo)
     {
-        printf("Pedido %d | Endereço: %s | Status: %s\n", p->codigo, p->endereco, texto_status(p->status));
+        printf("Pedido %d | Endereço: %s | Status: %s | Prioridade: %d\n",
+        p->codigo, p->endereco, texto_status(p->status), p->prioridade);
 
         for (ItemPedido *i = p->itens; i != NULL; i = i->proximo) 
         {
-            printf("Produto %d (volume %d) x %d\n", produto_codigo(i->produto), produto_volume(i->produto), i->quantidade);
+            printf("Produto %d (volume %d) x %d\n",
+            produto_codigo(i->produto), produto_volume(i->produto), i->quantidade);
         }
     }
 }
