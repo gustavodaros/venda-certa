@@ -1,11 +1,12 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include "pilha.h"
 
-typedef struct NoPilha{
-    int codigo;
+struct NoPilha{
+    char codigo[4];
     int volume;
-    struct NoPilha *proximo;
-} NoPilha;
+    NoPilha *proximo;
+};
 
 struct PilhaPacote{
     NoPilha *topo;
@@ -24,7 +25,7 @@ PilhaPacote *criar_pilha_pacote()
     return pilha;
 }
 
-int empilhar(PilhaPacote *pilha, int volume, int codigo)
+int empilhar(PilhaPacote *pilha, int volume, char *codigo)
 {
     if (pilha == NULL) return 0;
 
@@ -32,7 +33,7 @@ int empilhar(PilhaPacote *pilha, int volume, int codigo)
     if (novo == NULL) return 0;
 
     novo->volume = volume;
-    novo->codigo = codigo;
+    snprintf(novo->codigo, sizeof(novo->codigo), "%s", codigo);
     novo->proximo = pilha->topo;
 
     pilha->topo = novo;

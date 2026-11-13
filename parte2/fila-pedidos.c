@@ -125,7 +125,7 @@ void imprimir_fila_pedidos(FilaPedidos *fila)
 
         for (ItemPedido *i = p->itens; i != NULL; i = i->proximo) 
         {
-            printf("Produto %d (volume %d) x %d\n",
+            printf("Produto %s (volume %d) x %d\n",
             produto_codigo(i->produto), produto_volume(i->produto), i->quantidade);
         }
     }

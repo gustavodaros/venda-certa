@@ -3,6 +3,7 @@
 #include <string.h>
 #include <limits.h>
 #include <time.h>
+#include <ctype.h>
 #include "config.h"
 #include "produto.h"
 #include "pilha.h"
@@ -53,6 +54,18 @@ int ler_inteiro(char *mensagem, int *valor)
     return 1;
 }
 
+int ler_codigo(char *mensagem, char *codigo)
+{
+    char buffer[32];
+
+    printf("%s", mensagem);
+    if (!ler_linha(buffer, sizeof(buffer)) || !codigo_valido(buffer)) return 0;
+
+    buffer[0] = (char)toupper((unsigned char)buffer[0]);
+    memcpy(codigo, buffer, 4);
+    return 1;
+}
+
 void pausar()
 {
     char descarte[8];
@@ -63,13 +76,14 @@ void pausar()
 
 void cadastrar_produto(AbbProdutos *arvore_produtos)
 {
-    int codigo, volume;
+    char codigo[4];
+    int volume;
 
     printf("Cadastre seu produto no sistema\n");
 
-    if(!ler_inteiro("Insira o código do produto: ", &codigo))
+    if(!ler_codigo("Insira o código do produto (uma letra e dois dígitos, ex: P10): ", &codigo))
     {
-        printf("Código inválido\n");
+        printf("Código inválido, use uma letra seguida de dois dígitos (ex: P10)\n");
         return;
     }
     if(!ler_inteiro("Insira o volume do produto (1 a 10): ", &volume))
@@ -81,13 +95,13 @@ void cadastrar_produto(AbbProdutos *arvore_produtos)
     switch(inserir_arvore_produtos(arvore_produtos, volume, codigo))
     {
         case PRODUTO_OK:
-            printf("Produto %d cadastrado com sucesso!\n", codigo);
+            printf("Produto %s cadastrado com sucesso!\n", codigo);
             break;
         case PRODUTO_VOLUME_INVALIDO:
             printf("Volume inválido, o volume deve estar entre 1 e %d\n", CAPACIDADE_CAIXA);
             break;
         case PRODUTO_CODIGO_DUPLICADO:
-            printf("Já existe um produto com o código %d\n", codigo);
+            printf("Já existe um produto com o código %s\n", codigo);
             break;
         default:
             printf("Erro ao cadastrar o produto\n");
@@ -97,16 +111,17 @@ void cadastrar_produto(AbbProdutos *arvore_produtos)
 
 int ler_item_pedido(AbbProdutos *arvore_produtos, Pedido *pedido)
 {
-    int codigo, quantidade;
+    char codigo[4];
+    int quantidade;
 
-    if(!ler_inteiro("Código do produto: ", &codigo)){
-        printf("Código inválido\n");
+    if(!ler_codigo("Código do produto (ex: P10): ", &codigo)){
+        printf("Código inválido, use uma letra seguida de dois dígitos (ex: P10)\n");
         return 0;
     }
 
     Produto *produto = buscar_produto(arvore_produtos, codigo);
     if(produto == NULL){
-        printf("Produto %d não encontrado no catálogo\n", codigo);
+        printf("Produto %s não encontrado no catálogo\n", codigo);
         return 0;
     }
 
@@ -208,7 +223,7 @@ void empilhar_empacotar(FilaPedidos *fila_pedidos, FilaPacotes *fila_pacotes)
     for (ItemPedido *item = pedido_primeiro_item(pedido); ok && item != NULL; item = item_proximo(item))
     {
         int volume = produto_volume(item_produto(item));
-        int codigo = produto_codigo(item_produto(item));
+        char *codigo = produto_codigo(item_produto(item));
 
         for(int unidade = 0; ok && unidade < item_quantidade(item); unidade++)
         {
