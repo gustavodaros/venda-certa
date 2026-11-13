@@ -2,11 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <time.h>
 #include "config.h"
 #include "produto.h"
 #include "pilha.h"
 #include "fila-pedidos.h"
 #include "fila-pacotes.h"
+#include "docas.h"
 
 int proximo_codigo_pedido = 1001;
 
@@ -249,19 +251,39 @@ void empilhar_empacotar(FilaPedidos *fila_pedidos, FilaPacotes *fila_pacotes)
     liberar_pedido(pedido);
 }
 
+void expedicao_pacotes_docas(Docas *docas, FilaPacotes *fila_pacotes)
+{
+    if(fila_pacotes_vazia(fila_pacotes)){
+        printf("Não há pacotes para expedição no momento.\n");
+        return;
+    }
+    while(!fila_pacotes_vazia(fila_pacotes))
+    {
+        Pacote *pacote = desenfileirar_pacotes(fila_pacotes);
+        carregar_pacote(docas, pacote);
+        liberar_pacote(pacote);
+    }
+    finalizar_expedicao(docas);
+}
+
 int main()
 {
     int op = -1;
+
+    srand(time(NULL));
+    
     AbbProdutos *arvore_produtos = criar_arvore_produtos();
     FilaPedidos *fila_pedidos = criar_fila_pedidos();
     FilaPacotes *fila_pacotes = criar_fila_pacotes();
+    Docas *docas = criar_docas();
 
-    if (arvore_produtos == NULL || fila_pedidos == NULL || fila_pacotes == NULL)
+    if (arvore_produtos == NULL || fila_pedidos == NULL || fila_pacotes == NULL || docas == NULL)
     {
         printf("Erro ao inicializar o sistema\n");
         liberar_fila_pacotes(fila_pacotes);
         liberar_fila_pedidos(fila_pedidos);
         liberar_arvore_produtos(arvore_produtos);
+        liberar_docas(docas);
         return 1;
     }
 
@@ -270,9 +292,11 @@ int main()
         printf("1. Cadastrar produto\n");
         printf("2. Cadastrar pedido\n");
         printf("3. Separar e empacotar próximo pedido\n");
-        printf("4. Listar produtos\n");
-        printf("5. Listar pedidos na fila\n");
-        printf("6. Listar pacotes prontos\n");
+        printf("4. Realizar a expedição dos pacotes para as docas\n");
+        printf("5. Listar produtos\n");
+        printf("6. Listar pedidos na fila\n");
+        printf("7. Listar pacotes prontos\n");
+        printf("8. Listar as docas\n");
         printf("0. Encerrar\n\n");
 
         if (!ler_inteiro("Informe sua opcao: ", &op)) op = feof(stdin) ? 0 : -1;
@@ -294,17 +318,27 @@ int main()
                 break;
 
             case 4:
-                imprimir_arvore_produtos(arvore_produtos);
+                expedicao_pacotes_docas(docas, fila_pacotes);
                 pausar();
                 break;
 
             case 5:
-                imprimir_fila_pedidos(fila_pedidos);
+                imprimir_arvore_produtos(arvore_produtos);
                 pausar();
                 break;
 
             case 6:
+                imprimir_fila_pedidos(fila_pedidos);
+                pausar();
+                break;
+
+            case 7:
                 imprimir_fila_pacotes(fila_pacotes);
+                pausar();
+                break;
+
+            case 8:
+                imprimir_docas(docas);
                 pausar();
                 break;
 
@@ -323,6 +357,7 @@ int main()
     liberar_fila_pedidos(fila_pedidos);
     liberar_fila_pacotes(fila_pacotes);
     liberar_arvore_produtos(arvore_produtos);
+    liberar_docas(docas);
 
     return 0;
 }
