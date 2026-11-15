@@ -79,9 +79,9 @@ void cadastrar_produto(AbbProdutos *arvore_produtos)
     char codigo[4];
     int volume;
 
-    printf("Cadastre seu produto no sistema\n");
+    printf("=== Cadastre seu produto no sistema ===\n\n");
 
-    if(!ler_codigo("Insira o código do produto (uma letra e dois dígitos, ex: P10): ", &codigo))
+    if(!ler_codigo("Insira o código do produto (uma letra e dois dígitos, ex: P10): ", codigo))
     {
         printf("Código inválido, use uma letra seguida de dois dígitos (ex: P10)\n");
         return;
@@ -114,7 +114,7 @@ int ler_item_pedido(AbbProdutos *arvore_produtos, Pedido *pedido)
     char codigo[4];
     int quantidade;
 
-    if(!ler_codigo("Código do produto (ex: P10): ", &codigo)){
+    if(!ler_codigo("Código do produto (ex: P10): ", codigo)){
         printf("Código inválido, use uma letra seguida de dois dígitos (ex: P10)\n");
         return 0;
     }
@@ -147,9 +147,9 @@ void cadastrar_pedido(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
     int adicionar_mais = 0;
     int prioridade = 0;
 
-    printf("Cadastre seu pedido\n");
+    printf("=== Cadastre seu pedido ===\n\n");
     if(arvore_produtos_vazia(arvore_produtos)){
-        printf("Nenhum produto cadastrado. Cadastre um produto antes de criar pedidos.\n");
+        printf("Nenhum produto cadastrado. Cadastre um produto antes de criar pedidos\n");
         return;
     }
 
@@ -178,7 +178,7 @@ void cadastrar_pedido(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
         if(ler_item_pedido(arvore_produtos, pedido)) itens_adicionados++;
 
         adicionar_mais = 0;
-        ler_inteiro("Adicionar outro item?\n1 = sim\n0 = não\n", &adicionar_mais);
+        ler_inteiro("Adicionar outro item?\n1 = Sim\n0 = Não\n", &adicionar_mais);
 
     } while(adicionar_mais == 1);
 
@@ -281,6 +281,39 @@ void expedicao_pacotes_docas(Docas *docas, FilaPacotes *fila_pacotes)
     finalizar_expedicao(docas);
 }
 
+void remover_produto_menu(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
+{
+    if(arvore_produtos == NULL)
+    {
+        printf("O catálogo de produtos está vazio\n");
+        return;
+    }
+    char codigo[4];
+
+    printf("=== Remover produto do catálogo ===\n\n");
+    if(!ler_codigo("Código do produto (ex: P10): ", codigo))
+    {
+        printf("Código inválido, use uma letra seguida de dois dígitos (ex: P10)\n");
+        return;
+    }
+
+    Produto *produto = buscar_produto(arvore_produtos, codigo);
+    if(produto == NULL)
+    {
+        printf("Produto %s não encontrado no catálogo\n", codigo);
+        return;
+    }
+    
+    if(produto_em_pedido_pendente(fila_pedidos, produto))
+    {
+        printf("O produto %s está em um pedido que ainda não foi empacotado, não pode ser removido\n", codigo);
+        return;
+    }
+
+    remover_produto(arvore_produtos, produto);
+    printf("Produto %s removido\n", codigo);
+}
+
 int main()
 {
     int op = -1;
@@ -312,11 +345,13 @@ int main()
         printf("6. Listar pedidos na fila\n");
         printf("7. Listar pacotes prontos\n");
         printf("8. Listar as docas\n");
+        printf("9. Remover produto cadastrado\n");
         printf("0. Encerrar\n\n");
 
         if (!ler_inteiro("Informe sua opcao: ", &op)) op = feof(stdin) ? 0 : -1;
 
-        switch (op) {
+        switch(op)
+        {
             case 1:
                 cadastrar_produto(arvore_produtos);
                 pausar();
@@ -354,6 +389,11 @@ int main()
 
             case 8:
                 imprimir_docas(docas);
+                pausar();
+                break;
+
+            case 9:
+                remover_produto_menu(arvore_produtos, fila_pedidos);
                 pausar();
                 break;
 

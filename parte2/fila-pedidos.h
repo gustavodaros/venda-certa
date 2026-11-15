@@ -19,6 +19,8 @@ int adicionar_item_pedido(Pedido *pedido, ItemPedido *item);
 void enfileirar_pedido(FilaPedidos *fila, Pedido *pedido);
 Pedido *desenfileirar_pedido(FilaPedidos *fila);             
 int fila_pedidos_vazia(FilaPedidos *fila);
+char *texto_status(int status);
+int produto_em_pedido_pendente(FilaPedidos *fila, Produto *produto);
 void imprimir_fila_pedidos(FilaPedidos *fila);
 void liberar_pedido(Pedido *pedido);
 void liberar_fila_pedidos(FilaPedidos *fila);

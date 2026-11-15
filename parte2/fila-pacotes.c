@@ -47,6 +47,14 @@ void enfileirar_pacotes(FilaPacotes *fila, Pacote *pacote)
 {
     if (fila == NULL || pacote == NULL) return;
 
+    if (fila->tras != NULL && fila->tras->prioridade <= pacote->prioridade)
+    {
+        pacote->proximo = NULL;
+        fila->tras->proximo = pacote;
+        fila->tras = pacote;
+        return;
+    }
+
     Pacote *anterior = NULL;
     Pacote *atual = fila->frente;
     while(atual != NULL && atual->prioridade <= pacote->prioridade)

@@ -22,6 +22,14 @@ void imprimir_em_ordem(Produto *raiz);
 void imprimir_arvore_produtos(AbbProdutos *abb);
 void liberar_pos_ordem(Produto* raiz);
 void liberar_arvore_produtos(AbbProdutos *abb);
+Produto *minimo(Produto *produto);
+Produto *maximo(Produto *produto);
+Produto *sucessor(Produto *atual);
+Produto *predecessor(Produto *atual);
+void remover_folha(AbbProdutos *abb, Produto *produto);
+void remover_produto_um_filho(AbbProdutos *abb, Produto *produto);
+void remover_produto_dois_filhos(AbbProdutos *abb, Produto *produto);
+void remover_produto(AbbProdutos *abb, Produto *produto);
 
 char *produto_codigo(Produto *produto);
 int produto_volume(Produto *produto);

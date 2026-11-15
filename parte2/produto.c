@@ -135,6 +135,109 @@ void liberar_arvore_produtos(AbbProdutos *abb)
     free(abb);
 }
 
+Produto *minimo(Produto *produto)
+{
+    Produto *atual = produto;
+
+    while (atual && atual->esquerdo != NULL) atual = atual->esquerdo;
+
+    return atual;
+}
+
+Produto *maximo(Produto *produto)
+{
+    Produto* atual = produto;
+
+    while (atual && atual->direito != NULL) atual = atual->direito;
+
+    return atual;
+}
+
+Produto *sucessor(Produto *atual)
+{
+    if (atual->direito != NULL) return minimo(atual->direito);
+
+    Produto *ancestral = atual->pai;
+    while (ancestral != NULL && atual == ancestral->direito)
+    {
+        atual = ancestral;
+        ancestral = ancestral->pai;
+    }
+    return ancestral;
+}
+
+Produto *predecessor(Produto *atual)
+{
+    if (atual->esquerdo != NULL) return maximo(atual->esquerdo);
+
+    Produto *ancestral = atual->pai;
+    while (ancestral != NULL && atual == ancestral->esquerdo)
+    {
+        atual = ancestral;
+        ancestral = ancestral->pai;
+    }
+    return ancestral;
+}
+
+void remover_folha(AbbProdutos *abb, Produto *produto)
+{
+    if(produto == NULL) return;
+
+    if(produto->pai == NULL) abb->raiz = NULL;
+    else if(produto->pai->esquerdo == produto) produto->pai->esquerdo = NULL;
+    else if(produto->pai->direito == produto) produto->pai->direito = NULL;
+
+    free(produto);
+}
+
+void remover_produto_um_filho(AbbProdutos *abb, Produto *produto)
+{
+    if(produto == NULL) return;
+
+    Produto *filho = (produto->esquerdo != NULL) ? produto->esquerdo : produto->direito;
+
+    if(produto->pai == NULL) abb->raiz = filho;
+    else if(produto->pai->direito == produto) produto->pai->direito = filho;
+    else if(produto->pai->esquerdo == produto) produto->pai->esquerdo = filho; 
+    filho->pai = produto->pai;
+
+    free(produto);
+}
+
+void remover_produto_dois_filhos(AbbProdutos *abb, Produto *produto)
+{
+    if(produto == NULL) return;
+
+    Produto *suc = sucessor(produto);
+    if(suc->pai != produto)
+    {
+        suc->pai->esquerdo = suc->direito;
+        if(suc->direito != NULL) suc->direito->pai = suc->pai;
+
+        suc->direito = produto->direito;
+        suc->direito->pai = suc;
+    }
+
+    if(produto->pai == NULL) abb->raiz = suc;
+    else if(produto->pai->esquerdo == produto) produto->pai->esquerdo = suc;
+    else produto->pai->direito = suc;
+    suc->pai = produto->pai;
+
+    suc->esquerdo = produto->esquerdo;
+    suc->esquerdo->pai = suc;
+
+    free(produto);
+}
+
+void remover_produto(AbbProdutos *abb, Produto *produto)
+{
+    if(abb == NULL || produto == NULL) return;
+
+    if(produto->esquerdo == NULL && produto->direito == NULL) remover_folha(abb, produto);
+    else if(produto->esquerdo == NULL || produto->direito == NULL) remover_produto_um_filho(abb, produto);
+    else remover_produto_dois_filhos(abb, produto);
+}
+
 char *produto_codigo(Produto *produto){
     return produto == NULL ? "" : produto->codigo;
 }

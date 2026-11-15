@@ -111,6 +111,17 @@ char *texto_status(int status)
     }
 }
 
+int produto_em_pedido_pendente(FilaPedidos *fila, Produto *produto)
+{
+    if (fila == NULL || produto == NULL) return 0;
+
+    for (Pedido *p = fila->frente; p != NULL; p = p->proximo)
+        for (ItemPedido *i = p->itens; i != NULL; i = i->proximo)
+            if (i->produto == produto) return 1;
+
+    return 0;
+}
+
 void imprimir_fila_pedidos(FilaPedidos *fila)
 {
     if (fila_pedidos_vazia(fila)){
