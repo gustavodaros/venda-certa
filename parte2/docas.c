@@ -67,6 +67,10 @@ void carregar_pacote(Docas *docas, Pacote *pacote)
         if(docas->vetor[i].usado + volume <= docas->vetor[i].capacidade)
         {
             docas->vetor[i].usado += volume;
+            
+            printf("%s (volume %d) -> Doca %d (%d/%d)\n", 
+            pacote_codigo(pacote), volume, i + 1, docas->vetor[i].usado, docas->vetor[i].capacidade);
+
             if(docas->vetor[i].usado == docas->vetor[i].capacidade)
             {
                 sair_caminhao(docas, i);

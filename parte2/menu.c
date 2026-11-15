@@ -114,19 +114,22 @@ int ler_item_pedido(AbbProdutos *arvore_produtos, Pedido *pedido)
     char codigo[4];
     int quantidade;
 
-    if(!ler_codigo("Código do produto (ex: P10): ", codigo)){
+    if(!ler_codigo("Código do produto (ex: P10): ", codigo))
+    {
         printf("Código inválido, use uma letra seguida de dois dígitos (ex: P10)\n");
         return 0;
     }
 
     Produto *produto = buscar_produto(arvore_produtos, codigo);
-    if(produto == NULL){
+    if(produto == NULL)
+    {
         printf("Produto %s não encontrado no catálogo\n", codigo);
         return 0;
     }
 
-    if(!ler_inteiro("Quantidade: ", &quantidade) || quantidade <= 0){
-        printf("Quantidade inválida\n");
+    if(!ler_inteiro("Quantidade: ", &quantidade) || quantidade <= 0 || quantidade > QUANTIDADE_MAXIMA)
+    {
+        printf("Quantidade inválida (use de 1 a %d)\n", QUANTIDADE_MAXIMA);
         return 0;
     }
 
@@ -161,26 +164,24 @@ void cadastrar_pedido(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
     }
 
     if(!ler_inteiro("Digite a prioridade do seu pedido:\n1 = Expressa\n2 = Rápida\n3 = Normal\n", 
-    &prioridade) || prioridade < PRIORIDADE_EXPRESSA || prioridade > PRIORIDADE_NORMAL)
-    {
+    &prioridade) || prioridade < PRIORIDADE_EXPRESSA || prioridade > PRIORIDADE_NORMAL){
         printf("Prioridade inválida\n");
         return;
     }
 
     Pedido *pedido = criar_pedido(proximo_codigo_pedido, endereco, PEDIDO_AGUARDANDO_SEPARACAO, prioridade);
-    if(pedido == NULL)
-    {
+    if(pedido == NULL){
         printf("Erro ao criar o pedido\n");
         return;
     }
 
-    do {
+    do{
         if(ler_item_pedido(arvore_produtos, pedido)) itens_adicionados++;
 
         adicionar_mais = 0;
         ler_inteiro("Adicionar outro item?\n1 = Sim\n0 = Não\n", &adicionar_mais);
 
-    } while(adicionar_mais == 1);
+    }while(adicionar_mais == 1);
 
     if(itens_adicionados == 0)
     {
@@ -283,7 +284,7 @@ void expedicao_pacotes_docas(Docas *docas, FilaPacotes *fila_pacotes)
 
 void remover_produto_menu(AbbProdutos *arvore_produtos, FilaPedidos *fila_pedidos)
 {
-    if(arvore_produtos == NULL)
+    if(arvore_produtos_vazia(arvore_produtos))
     {
         printf("O catálogo de produtos está vazio\n");
         return;
