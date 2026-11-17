@@ -4,16 +4,16 @@
 #include "docas.h"
 #include "fila-pacotes.h"
 
-struct Caminhao{
+typedef struct{
     int capacidade;
     int usado;
-};
+}Caminhao;
 
 struct Docas{
     Caminhao vetor[NUM_DOCAS];
 };
 
-int sortear_capacidade()
+static int sortear_capacidade()
 {
     int capacidade[3] = {CAMINHAO_PEQUENO, CAMINHAO_MEDIO, CAMINHAO_GRANDE};
     return capacidade[rand() % 3];
@@ -32,7 +32,7 @@ Docas *criar_docas()
     return docas;
 }
 
-int doca_mais_cheia(Docas *docas)
+static int doca_mais_cheia(Docas *docas)
 {
     int j = 0;
     double percentual, p = 0;
@@ -48,7 +48,7 @@ int doca_mais_cheia(Docas *docas)
     return j;
 }
 
-void sair_caminhao(Docas *docas, int i)
+static void sair_caminhao(Docas *docas, int i)
 {
     printf("Doca %d: caminhão saiu com %d/%d do seu espaço preenchido.\n",
     i + 1, docas->vetor[i].usado, docas->vetor[i].capacidade);

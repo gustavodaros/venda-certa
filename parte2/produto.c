@@ -41,7 +41,7 @@ Produto *buscar_produto(AbbProdutos *abb, char *codigo)
     return NULL;
 }
 
-Produto *criar_produto(char *codigo, int volume)
+static Produto *criar_produto(char *codigo, int volume)
 {
     Produto *novo = (Produto*)malloc(sizeof(Produto));
     if(novo == NULL) return NULL;
@@ -99,7 +99,7 @@ int arvore_produtos_vazia(AbbProdutos *abb)
     return abb == NULL || abb->raiz == NULL;
 }
 
-void imprimir_em_ordem(Produto *raiz)
+static void imprimir_em_ordem(Produto *raiz)
 {
     if (raiz == NULL) return;          
 
@@ -117,7 +117,7 @@ void imprimir_arvore_produtos(AbbProdutos *abb)
     imprimir_em_ordem(abb->raiz);
 }
 
-void liberar_pos_ordem(Produto* raiz)
+static void liberar_pos_ordem(Produto* raiz)
 {
     if(raiz != NULL) 
     {
@@ -135,7 +135,7 @@ void liberar_arvore_produtos(AbbProdutos *abb)
     free(abb);
 }
 
-Produto *minimo(Produto *produto)
+static Produto *minimo(Produto *produto)
 {
     Produto *atual = produto;
 
@@ -144,16 +144,7 @@ Produto *minimo(Produto *produto)
     return atual;
 }
 
-Produto *maximo(Produto *produto)
-{
-    Produto* atual = produto;
-
-    while (atual && atual->direito != NULL) atual = atual->direito;
-
-    return atual;
-}
-
-Produto *sucessor(Produto *atual)
+static Produto *sucessor(Produto *atual)
 {
     if (atual->direito != NULL) return minimo(atual->direito);
 
@@ -166,20 +157,7 @@ Produto *sucessor(Produto *atual)
     return ancestral;
 }
 
-Produto *predecessor(Produto *atual)
-{
-    if (atual->esquerdo != NULL) return maximo(atual->esquerdo);
-
-    Produto *ancestral = atual->pai;
-    while (ancestral != NULL && atual == ancestral->esquerdo)
-    {
-        atual = ancestral;
-        ancestral = ancestral->pai;
-    }
-    return ancestral;
-}
-
-void remover_folha(AbbProdutos *abb, Produto *produto)
+static void remover_folha(AbbProdutos *abb, Produto *produto)
 {
     if(produto == NULL) return;
 
@@ -190,7 +168,7 @@ void remover_folha(AbbProdutos *abb, Produto *produto)
     free(produto);
 }
 
-void remover_produto_um_filho(AbbProdutos *abb, Produto *produto)
+static void remover_produto_um_filho(AbbProdutos *abb, Produto *produto)
 {
     if(produto == NULL) return;
 
@@ -204,7 +182,7 @@ void remover_produto_um_filho(AbbProdutos *abb, Produto *produto)
     free(produto);
 }
 
-void remover_produto_dois_filhos(AbbProdutos *abb, Produto *produto)
+static void remover_produto_dois_filhos(AbbProdutos *abb, Produto *produto)
 {
     if(produto == NULL) return;
 

@@ -14,21 +14,11 @@ typedef enum{
 
 AbbProdutos *criar_arvore_produtos();
 ResultadoProduto inserir_arvore_produtos(AbbProdutos *lista, int volume, char *codigo);
-Produto *criar_produto(char *codigo, int volume);
 Produto *buscar_produto(AbbProdutos *lista, char *codigo);
 int codigo_valido(char *codigo);
 int arvore_produtos_vazia(AbbProdutos *lista);
-void imprimir_em_ordem(Produto *raiz);
 void imprimir_arvore_produtos(AbbProdutos *abb);
-void liberar_pos_ordem(Produto* raiz);
 void liberar_arvore_produtos(AbbProdutos *abb);
-Produto *minimo(Produto *produto);
-Produto *maximo(Produto *produto);
-Produto *sucessor(Produto *atual);
-Produto *predecessor(Produto *atual);
-void remover_folha(AbbProdutos *abb, Produto *produto);
-void remover_produto_um_filho(AbbProdutos *abb, Produto *produto);
-void remover_produto_dois_filhos(AbbProdutos *abb, Produto *produto);
 void remover_produto(AbbProdutos *abb, Produto *produto);
 
 char *produto_codigo(Produto *produto);

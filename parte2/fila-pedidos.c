@@ -102,7 +102,7 @@ int fila_pedidos_vazia(FilaPedidos *fila)
     return fila == NULL || fila->frente == NULL;
 }
 
-char *texto_status(int status)
+static char *texto_status(int status)
 {
     switch (status){
         case PEDIDO_AGUARDANDO_SEPARACAO: return "Aguardando separação";
